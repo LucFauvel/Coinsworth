@@ -1,4 +1,4 @@
-# Cogsworth
+# Coinsworth
 Discord Bot named Coinsworth for Cognition Corp's crypto currency based server based off of Sorrien's DiscordBot using Discord.Net
 
 Setup:
