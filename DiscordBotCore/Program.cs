@@ -24,6 +24,7 @@ namespace DiscordBot
         private DiscordSocketClient _client;
         private AdminBot adminBot;
         private CoinBot coinBot;
+        private List<GuildEmote> Emotes;
         private string BotUsername;
         private IRole inGameRole;
         private IRole streamingRole;
@@ -52,8 +53,12 @@ namespace DiscordBot
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
 
-            coinBot = new CoinBot(_client);
-            adminBot = new AdminBot(coinBot);
+            //SocketGuild Server = _client.GetGuild(358635130430029834);
+            //Emotes = new List<GuildEmote>(Server.Emotes);
+            //SocketTextChannel AlertChannel = Server.GetTextChannel(361595846518636544);
+
+            coinBot = new CoinBot(_client, Emotes);
+            adminBot = new AdminBot(coinBot, _client);
 
             _client.MessageReceived += MessageReceived;
 

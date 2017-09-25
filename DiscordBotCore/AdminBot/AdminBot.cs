@@ -17,6 +17,7 @@ namespace DiscordBotCore.AdminBot
     {
         public static IConfigurationRoot Configuration { get; set; }
         public CoinBot coinBot { get; set; }
+        public DiscordSocketClient client { get; set; }
         public string CommandPrefix
         {
             get
@@ -24,7 +25,7 @@ namespace DiscordBotCore.AdminBot
                 return Configuration["options:prefix"];
             }
         }
-        public AdminBot(CoinBot coinBot)
+        public AdminBot(CoinBot coinBot, DiscordSocketClient client)
         {
             var builder = new ConfigurationBuilder()
               .SetBasePath(Directory.GetCurrentDirectory())
@@ -33,6 +34,7 @@ namespace DiscordBotCore.AdminBot
             Configuration = builder.Build();
 
             this.coinBot = coinBot;
+            this.client = client;
         }
 
         public string RunCommand(string command, SocketMessage message)
@@ -50,7 +52,7 @@ namespace DiscordBotCore.AdminBot
 
             if (coinBot.Coins.Any(x => x.Symbol.ToLower() == commandWord.ToLower()))
             {
-                response = coinBot.Coins.FirstOrDefault(x => x.Symbol.ToLower() == commandWord.ToLower()).ShowInfo();
+                response = coinBot.Coins.FirstOrDefault(x => x.Symbol.ToLower() == commandWord.ToLower()).ShowInfo(client);
             }
             else
             {
@@ -59,6 +61,17 @@ namespace DiscordBotCore.AdminBot
                 {
                     case "":
                         response = "I didn't hear a command in there.";
+                        break;
+
+                    case "coinlookup":
+                        if (string.IsNullOrEmpty(commandParameters))
+                        {
+                            response = parameterError;
+                        }
+                        else
+                        {
+                            response = coinBot.LookupCoin(commandParameters);
+                        }
                         break;
 
                     case "help":

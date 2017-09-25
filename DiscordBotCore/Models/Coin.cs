@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Discord.WebSocket;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -49,9 +50,16 @@ namespace DiscordBotCore.Models
         [JsonProperty("percent_change_7d")]
         public float Percent_change_Week { get; set; }
 
-        public string ShowInfo()
+        public string ShowInfo(DiscordSocketClient client)
         {
-            return Price_usd + " (" + Percent_change_hour + ")";
+            List<Discord.GuildEmote> Emotes = new List<Discord.GuildEmote>(client.GetGuild(358635130430029834).Emotes);
+            string Emote = "<:" + Name + ":" + Emotes.Find(x => x.Name == Name).Id + ">";
+
+            return "Name : " + Name + " " + Emote + "\n"
+                 + "Symbol : " + Symbol + "\n"
+                 + "Price USD : " + Price_usd + "$\n"
+                 + "Percent change 1h : " + Math.Abs(Percent_change_hour) + "% " + (Percent_change_hour < 0 ? "<:Red:361650806409396224>" : "<:Green:361650797802684416>") + "\n"
+                 + "Price BTC : " + Price_btc + "\n";
         }
     }
 }
