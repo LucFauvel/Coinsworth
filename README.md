@@ -1,5 +1,5 @@
 # Cogsworth
-Discord Bot named Cogsworth for Cognition Corp. based off of Sorrien's DiscordBot using Discord.Net
+Discord Bot named Coinsworth for Cognition Corp's crypto currency based server based off of Sorrien's DiscordBot using Discord.Net
 
 Setup:
 You will have to follow the first few steps of this guide:
