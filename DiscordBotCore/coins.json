@@ -1,0 +1,50 @@
+ [
+        {
+            "id": "bitcoin", 
+            "name": "Bitcoin", 
+            "symbol": "BTC",
+            "alert": "price"
+        },
+
+        {
+            "id": "ethereum", 
+            "name": "Ethereum", 
+            "symbol": "ETH",
+            "alert": "price"
+        },
+
+        {
+             "id": "litecoin", 
+            "name": "Litecoin", 
+            "symbol": "LTC",
+            "alert": "price" 
+        },
+
+        {
+            "id": "monero", 
+            "name": "Monero", 
+            "symbol": "XMR", 
+            "alert": "price" 
+        },
+
+        {
+            "id": "ripple", 
+            "name": "Ripple", 
+            "symbol": "XRP",
+            "alert": "price" 
+        },
+
+        {
+            "id": "neo", 
+            "name": "NEO", 
+            "symbol": "NEO",
+            "alert": "price" 
+        },
+
+    {
+        "id": "tether", 
+        "name": "Tether", 
+        "symbol": "USDT", 
+        "alert": "volume"
+    }
+]

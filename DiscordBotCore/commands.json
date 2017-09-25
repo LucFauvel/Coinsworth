@@ -1,0 +1,15 @@
+﻿{
+  "options": {
+    "prefix": "!"
+  },
+  "commands": [
+    {
+      "Command": "ping",
+      "Response": "pong"
+    },
+    {
+      "Command": "pong",
+      "Response": "ping"
+    }
+  ]
+}
