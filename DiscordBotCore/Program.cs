@@ -53,14 +53,11 @@ namespace DiscordBot
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
 
-            //SocketGuild Server = _client.GetGuild(358635130430029834);
-            //Emotes = new List<GuildEmote>(Server.Emotes);
-            //SocketTextChannel AlertChannel = Server.GetTextChannel(361595846518636544);
-
-            coinBot = new CoinBot(_client, Emotes);
+            coinBot = new CoinBot(_client);
             adminBot = new AdminBot(coinBot, _client);
 
             _client.MessageReceived += MessageReceived;
+            _client.GuildAvailable += GuildAvailable;
 
             await Task.Delay(-1);
         }
@@ -86,6 +83,13 @@ namespace DiscordBot
             {
                 await message.Channel.SendMessageAsync(response);
             }
+        }
+
+        private async Task GuildAvailable(SocketGuild guild)
+        {
+            coinBot.AlertChannel = guild.GetTextChannel(361595846518636544);
+            coinBot.Emotes = new List<GuildEmote>(guild.Emotes);
+            await coinBot.RefreshCoins();
         }
 
         private string SanitizeContent(string message)

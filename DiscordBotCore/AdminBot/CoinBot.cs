@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Timers;
 
 namespace DiscordBotCore.AdminBot
@@ -19,12 +20,11 @@ namespace DiscordBotCore.AdminBot
         WebClient Client;
         Timer aTimer;
         DiscordSocketClient _client { get; set; }
-        List<Discord.GuildEmote> Emotes;
-        SocketTextChannel AlertChannel { get; set; }
-        public CoinBot(DiscordSocketClient _client, List<Discord.GuildEmote> Emotes)
+        public List<Discord.GuildEmote> Emotes;
+        public SocketTextChannel AlertChannel { get; set; }
+        public CoinBot(DiscordSocketClient _client)
         {
             this._client = _client;
-            this.Emotes = Emotes;
 
             var builder = new ConfigurationBuilder()
               .SetBasePath(Directory.GetCurrentDirectory())
@@ -41,8 +41,7 @@ namespace DiscordBotCore.AdminBot
                 Coins = JsonConvert.DeserializeObject<List<Coin>>(json);
             }
 
-            //AlertChannel = textChannel;
-            RefreshCoins(_client);
+            Task.Run(() => RefreshCoins());
 
             aTimer = new Timer(5 * 60 * 1000); //one hour in milliseconds
             aTimer.AutoReset = true;
@@ -50,12 +49,12 @@ namespace DiscordBotCore.AdminBot
             aTimer.Start();
         }
 
-        private void OnTimedEvent(object source, ElapsedEventArgs e)
+        private async void OnTimedEvent(object source, ElapsedEventArgs e)
         {
-            RefreshCoins(_client);
+           await RefreshCoins();
         }
 
-        private void RefreshCoins(DiscordSocketClient client)
+        public async Task RefreshCoins()
         {
 
             for (int i = 0; i < Coins.Count; i++)
@@ -65,27 +64,39 @@ namespace DiscordBotCore.AdminBot
                 Coins[i] = Items.Find(x => x.Id == Coins[i].Id);
             }
 
-            foreach (Coin coin in Coins)
+            if (AlertChannel != null)
             {
-                string message = "Test";
-                if (coin.Alert == "price")
+                string message = null;
+
+                foreach (Coin coin in Coins)
                 {
-                    string Emote = "<:" + coin.Name + ":" + Emotes.Find(x => x.Name == coin.Name).Id + ">";
-
-                    if (coin.Percent_change_hour >= 4)
+                    
+                    if (coin.Alert == "price")
                     {
-                        message = "@everyone " + coin.Name + " " + Emote + " went up by " + Math.Abs(coin.Percent_change_hour) + " <:Green:361650797802684416>";
-                    }
-                    else if (coin.Percent_change_hour <= -4)
-                    {
-                        message = "@everyone " + coin.Name + " " + Emote + " went down by " + Math.Abs(coin.Percent_change_hour) + " <:Red:361650806409396224>";
+                        string Emote = null;
 
+                        if (Emotes.Exists(x => x.Name.ToLower() == coin.Name.ToLower()))
+                        {
+                            Emote = "<:" + coin.Name + ":" + Emotes.Find(x => x.Name.ToLower() == coin.Name.ToLower()).Id + ">";
+                        }
+
+                        if (coin.Percent_change_hour >= 4)
+                        {
+                            message = "@everyone " + coin.Name + " " + (Emote ?? "") + " went up by " + Math.Abs(coin.Percent_change_hour) + " <:Green:361650797802684416>";
+                        }
+                        else if (coin.Percent_change_hour <= -4)
+                        {
+                            message = "@everyone " + coin.Name + " " + (Emote ?? "") + " went down by " + Math.Abs(coin.Percent_change_hour) + " <:Red:361650806409396224>";
+
+                        }
+
+                        if (message != null)
+                        {
+                            await AlertChannel.SendMessageAsync(message);
+                        }
                     }
-                }
-                
+                }               
             }
-
-            //AlertChannel.SendMessageAsync("Test");
         }
 
         public string LookupCoin(string CoinId)

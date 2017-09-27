@@ -53,13 +53,20 @@ namespace DiscordBotCore.Models
         public string ShowInfo(DiscordSocketClient client)
         {
             List<Discord.GuildEmote> Emotes = new List<Discord.GuildEmote>(client.GetGuild(358635130430029834).Emotes);
-            string Emote = "<:" + Name + ":" + Emotes.Find(x => x.Name == Name).Id + ">";
+            string Emote = null;
 
-            return "Name : " + Name + " " + Emote + "\n"
+            if (Emotes.Exists(x => x.Name.ToLower() == Name.ToLower()))
+            {
+                Emote = "<:" + Name + ":" + Emotes.Find(x => x.Name.ToLower() == Name.ToLower()).Id + ">";
+            }
+
+            return "Name : " + (Emote ?? "") + " " + Name + "\n"
                  + "Symbol : " + Symbol + "\n"
-                 + "Price USD : " + Price_usd + "$\n"
-                 + "Percent change 1h : " + Math.Abs(Percent_change_hour) + "% " + (Percent_change_hour < 0 ? "<:Red:361650806409396224>" : "<:Green:361650797802684416>") + "\n"
-                 + "Price BTC : " + Price_btc + "\n";
+                 + "\nPrice USD : $" + Price_usd + "\n"
+                 + "Price BTC : " + Price_btc + " Ƀ\n"
+                 + "\nPercent change 1h : " + (Percent_change_hour < 0 ? "<:Red:361650806409396224> " : "<:Green:361650797802684416> ") + Math.Abs(Percent_change_hour) + "%\n"
+                 + "Percent change 24h : " + (Percent_change_Day < 0 ? "<:Red:361650806409396224> " : "<:Green:361650797802684416> ") + Math.Abs(Percent_change_Day) + "%\n"
+                 + "Percent change 7d : " + (Percent_change_Week < 0 ? "<:Red:361650806409396224> " : "<:Green:361650797802684416> ") + Math.Abs(Percent_change_Week) + "%\n";
         }
     }
 }
