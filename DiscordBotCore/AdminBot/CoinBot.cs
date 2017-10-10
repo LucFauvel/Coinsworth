@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,7 +62,10 @@ namespace DiscordBotCore.AdminBot
             {
                 string json = Client.DownloadString(TickerURL + Coins[i].Id);
                 List<Coin> Items = JsonConvert.DeserializeObject<List<Coin>>(json);
-                Coins[i] = Items.Find(x => x.Id == Coins[i].Id);
+                Coin FoundCoin = Items.Find(x => x.Id == Coins[i].Id);
+                FoundCoin.Alert = Coins[i].Alert;
+                FoundCoin.PreviousPercent = Coins[i].Percent_change_hour;
+                Coins[i] = FoundCoin;
             }
 
             if (AlertChannel != null)
@@ -71,7 +75,7 @@ namespace DiscordBotCore.AdminBot
                 foreach (Coin coin in Coins)
                 {
                     
-                    if (coin.Alert == "price")
+                    if (coin.Alert == "price" && (coin.PreviousPercent == null || coin.PreviousPercent != coin.Percent_change_hour))
                     {
                         string Emote = null;
 
@@ -82,11 +86,11 @@ namespace DiscordBotCore.AdminBot
 
                         if (coin.Percent_change_hour >= 4)
                         {
-                            message = "@everyone " + coin.Name + " " + (Emote ?? "") + " went up by " + Math.Abs(coin.Percent_change_hour) + " <:Green:361650797802684416>";
+                            message = " @everyone " + coin.Name + " " + (Emote ?? "") + " went up by <:Green:361650797802684416> " + Math.Abs(coin.Percent_change_hour) + "%";
                         }
                         else if (coin.Percent_change_hour <= -4)
                         {
-                            message = "@everyone " + coin.Name + " " + (Emote ?? "") + " went down by " + Math.Abs(coin.Percent_change_hour) + " <:Red:361650806409396224>";
+                            message = " @everyone " + coin.Name + " " + (Emote ?? "") + " went down by <:Red:361650806409396224> " + Math.Abs(coin.Percent_change_hour) + "%";
 
                         }
 

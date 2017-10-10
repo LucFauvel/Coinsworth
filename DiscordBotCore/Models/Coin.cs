@@ -50,6 +50,8 @@ namespace DiscordBotCore.Models
         [JsonProperty("percent_change_7d")]
         public float Percent_change_Week { get; set; }
 
+        public float? PreviousPercent { get; set; }
+
         public string ShowInfo(DiscordSocketClient client)
         {
             List<Discord.GuildEmote> Emotes = new List<Discord.GuildEmote>(client.GetGuild(358635130430029834).Emotes);
