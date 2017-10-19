@@ -23,6 +23,7 @@ namespace DiscordBotCore.AdminBot
         DiscordSocketClient _client { get; set; }
         public List<Discord.GuildEmote> Emotes;
         public SocketTextChannel AlertChannel { get; set; }
+        public Dictionary<string, DateTime> UpdateHistoy { get; set; }
         public CoinBot(DiscordSocketClient _client)
         {
             this._client = _client;
@@ -33,6 +34,8 @@ namespace DiscordBotCore.AdminBot
 
             Configuration = builder.Build();
             Client = new WebClient();
+
+            UpdateHistoy = new Dictionary<string, DateTime>();
 
             TickerURL = Configuration["config:tickerURL"];
 
@@ -64,18 +67,17 @@ namespace DiscordBotCore.AdminBot
                 List<Coin> Items = JsonConvert.DeserializeObject<List<Coin>>(json);
                 Coin FoundCoin = Items.Find(x => x.Id == Coins[i].Id);
                 FoundCoin.Alert = Coins[i].Alert;
-                FoundCoin.PreviousPercent = Coins[i].Percent_change_hour;
                 Coins[i] = FoundCoin;
             }
 
             if (AlertChannel != null)
             {
-                string message = null;
-
                 foreach (Coin coin in Coins)
                 {
-                    
-                    if (coin.Alert == "price" && (coin.PreviousPercent == null || coin.PreviousPercent != coin.Percent_change_hour))
+                    string message = null;
+                    bool NeedsUpdate = !UpdateHistoy.TryGetValue(coin.Name, out DateTime LastUpdate);
+
+                    if (coin.Alert == "price" && NeedsUpdate && TimeSpan.FromHours(1) <= (DateTime.Now - LastUpdate))
                     {
                         string Emote = null;
 
@@ -86,16 +88,17 @@ namespace DiscordBotCore.AdminBot
 
                         if (coin.Percent_change_hour >= 4)
                         {
-                            message = " @everyone " + coin.Name + " " + (Emote ?? "") + " went up by <:Green:361650797802684416> " + Math.Abs(coin.Percent_change_hour) + "%";
+                            message = " Hey humans! " + coin.Name + " " + (Emote ?? "") + " went up by <:Green:361650797802684416> " + Math.Abs(coin.Percent_change_hour) + "%";
                         }
                         else if (coin.Percent_change_hour <= -4)
                         {
-                            message = " @everyone " + coin.Name + " " + (Emote ?? "") + " went down by <:Red:361650806409396224> " + Math.Abs(coin.Percent_change_hour) + "%";
+                            message = " Hey humans! " + coin.Name + " " + (Emote ?? "") + " went down by <:Red:361650806409396224> " + Math.Abs(coin.Percent_change_hour) + "%";
 
                         }
 
                         if (message != null)
                         {
+                            UpdateHistoy.Add(coin.Name, DateTime.Now);
                             await AlertChannel.SendMessageAsync(message);
                         }
                     }

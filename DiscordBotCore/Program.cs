@@ -24,11 +24,7 @@ namespace DiscordBot
         private DiscordSocketClient _client;
         private AdminBot adminBot;
         private CoinBot coinBot;
-        private List<GuildEmote> Emotes;
         private string BotUsername;
-        private IRole inGameRole;
-        private IRole streamingRole;
-        private bool FirstConnect;
         public static void Main(string[] args)
             => new Program().MainAsync().GetAwaiter().GetResult();
 

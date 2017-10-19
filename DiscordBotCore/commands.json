@@ -10,6 +10,10 @@
     {
       "Command": "pong",
       "Response": "ping"
+    },
+    {
+      "Command": "whomadeyou",
+      "Response": "<@160861545637740544> made me sir!"
     }
   ]
 }
