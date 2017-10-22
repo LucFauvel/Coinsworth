@@ -23,7 +23,10 @@ namespace DiscordBotCore.AdminBot
         DiscordSocketClient _client { get; set; }
         public List<Discord.GuildEmote> Emotes;
         public SocketTextChannel AlertChannel { get; set; }
+        public List<IdSymbol> Symbols { get; set; }
         public Dictionary<string, DateTime> UpdateHistoy { get; set; }
+        public Dictionary<string, double> VolumeHistory { get; set; }
+
         public CoinBot(DiscordSocketClient _client)
         {
             this._client = _client;
@@ -36,6 +39,7 @@ namespace DiscordBotCore.AdminBot
             Client = new WebClient();
 
             UpdateHistoy = new Dictionary<string, DateTime>();
+            VolumeHistory = new Dictionary<string, double>();
 
             TickerURL = Configuration["config:tickerURL"];
 
@@ -45,9 +49,15 @@ namespace DiscordBotCore.AdminBot
                 Coins = JsonConvert.DeserializeObject<List<Coin>>(json);
             }
 
+            using (StreamReader r = new StreamReader("idlookup.json"))
+            {
+                string json = r.ReadToEnd();
+                Symbols = JsonConvert.DeserializeObject<List<IdSymbol>>(json);
+            }
+
             Task.Run(() => RefreshCoins());
 
-            aTimer = new Timer(5 * 60 * 1000); //one hour in milliseconds
+            aTimer = new Timer(5 * 60 * 1000); //5 minutes in milliseconds
             aTimer.AutoReset = true;
             aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             aTimer.Start();
@@ -55,7 +65,7 @@ namespace DiscordBotCore.AdminBot
 
         private async void OnTimedEvent(object source, ElapsedEventArgs e)
         {
-           await RefreshCoins();
+            await RefreshCoins();
         }
 
         public async Task RefreshCoins()
@@ -75,46 +85,87 @@ namespace DiscordBotCore.AdminBot
                 foreach (Coin coin in Coins)
                 {
                     string message = null;
-                    bool NeedsUpdate = !UpdateHistoy.TryGetValue(coin.Name, out DateTime LastUpdate);
+                    bool NeedsUpdate = !UpdateHistoy.TryGetValue(coin.Id, out DateTime LastUpdate);
+                    string Emote = null;
 
-                    if (coin.Alert == "price" && NeedsUpdate && TimeSpan.FromHours(1) <= (DateTime.Now - LastUpdate))
+                    if (NeedsUpdate || TimeSpan.FromHours(1) <= (DateTime.Now - LastUpdate))
                     {
-                        string Emote = null;
-
                         if (Emotes.Exists(x => x.Name.ToLower() == coin.Name.ToLower()))
                         {
                             Emote = "<:" + coin.Name + ":" + Emotes.Find(x => x.Name.ToLower() == coin.Name.ToLower()).Id + ">";
                         }
 
-                        if (coin.Percent_change_hour >= 4)
+                        if (coin.Alert == "volume" || coin.Alert == "both")
                         {
-                            message = " Hey humans! " + coin.Name + " " + (Emote ?? "") + " went up by <:Green:361650797802684416> " + Math.Abs(coin.Percent_change_hour) + "%";
-                        }
-                        else if (coin.Percent_change_hour <= -4)
-                        {
-                            message = " Hey humans! " + coin.Name + " " + (Emote ?? "") + " went down by <:Red:361650806409396224> " + Math.Abs(coin.Percent_change_hour) + "%";
+                            if (VolumeHistory.ContainsKey(coin.Id))
+                            {
+                                double Percent = ((coin.Day_volume_usd - VolumeHistory[coin.Id]) / VolumeHistory[coin.Id]) * 100;
+                                if (Percent >= 4)
+                                {
+                                    message = " Holy volume Batman! " + coin.Name + "'s volume " + (Emote ?? "") + " went up by <:Green:361650797802684416> " + Math.Abs(Percent) + "%";
+                                }
+                                else if (Percent <= -4)
+                                {
+                                    message = " Holy volume Batman! " + coin.Name + "'s volume " + (Emote ?? "") + " went down by <:Red:361650806409396224> " + Math.Abs(Percent) + "%";
 
+                                }
+
+                                VolumeHistory[coin.Id] = coin.Day_volume_usd;
+                            }
+                            else
+                            {
+                                VolumeHistory.Add(coin.Id, coin.Day_volume_usd);
+                            }
                         }
 
                         if (message != null)
                         {
-                            UpdateHistoy.Add(coin.Name, DateTime.Now);
+                            await AlertChannel.SendMessageAsync(message);
+                        }
+
+                        if (coin.Alert == "price" || coin.Alert == "both")
+                        {
+                            if (coin.Percent_change_hour >= 4)
+                            {
+                                message = " Hey humans! " + coin.Name + " " + (Emote ?? "") + " went up by <:Green:361650797802684416> " + Math.Abs(coin.Percent_change_hour) + "%";
+                            }
+                            else if (coin.Percent_change_hour <= -4)
+                            {
+                                message = " Hey humans! " + coin.Name + " " + (Emote ?? "") + " went down by <:Red:361650806409396224> " + Math.Abs(coin.Percent_change_hour) + "%";
+
+                            }
+                        }
+
+                        if (message != null)
+                        {
+                            if (NeedsUpdate)
+                            {
+                                UpdateHistoy.Add(coin.Id, DateTime.Now);
+                            }
+                            else
+                            {
+                                UpdateHistoy[coin.Id] = DateTime.Now;
+                            }
                             await AlertChannel.SendMessageAsync(message);
                         }
                     }
-                }               
+                }
             }
         }
 
         public string LookupCoin(string CoinId)
         {
             string CleanId = CoinId.Replace(" ", String.Empty);
+            if (Symbols.Any(x => x.Symbol.ToLower() == CleanId.ToLower()))
+            {
+                CleanId = Symbols.FirstOrDefault(x => x.Symbol.ToLower() == CleanId.ToLower()).Id;
+            }
             List<Coin> Items = null;
             string json = null;
 
             try
             {
-                json = Client.DownloadString(TickerURL + CleanId);
+                json = Client.DownloadString(TickerURL + CleanId.ToLower());
             }
             catch (WebException) { }
 
@@ -129,7 +180,7 @@ namespace DiscordBotCore.AdminBot
 
             if (Items != null)
             {
-                return Items.Find(x => x.Id == CleanId).ShowInfo(_client);
+                return Items.Find(x => x.Id.ToLower() == CleanId.ToLower()).ShowInfo(_client);
             }
             else
             {

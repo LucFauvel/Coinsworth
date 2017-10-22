@@ -3,21 +3,21 @@
             "id": "bitcoin", 
             "name": "Bitcoin", 
             "symbol": "BTC",
-            "alert": "price"
+            "alert": "both"
         },
 
         {
             "id": "ethereum", 
             "name": "Ethereum", 
             "symbol": "ETH",
-            "alert": "price"
+            "alert": "both"
         },
 
         {
              "id": "litecoin", 
             "name": "Litecoin", 
             "symbol": "LTC",
-            "alert": "price" 
+            "alert": "both" 
         },
 
         {

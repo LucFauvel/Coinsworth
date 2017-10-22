@@ -70,7 +70,7 @@ namespace DiscordBotCore.AdminBot
                         }
                         else
                         {
-                            response = coinBot.LookupCoin(commandParameters);
+                            response = coinBot.LookupCoin(commandParameters.ToLower());
                         }
                         break;
 

@@ -24,10 +24,10 @@ namespace DiscordBotCore.Models
         public string Alert { get; set; }
 
         [JsonProperty("price_usd")]
-        public double Price_usd { get; set; }
+        public decimal Price_usd { get; set; }
 
         [JsonProperty("price_btc")]
-        public double Price_btc { get; set; }
+        public decimal Price_btc { get; set; }
 
         [JsonProperty("24h_volume_usd")]
         public double Day_volume_usd { get; set; }
@@ -42,13 +42,13 @@ namespace DiscordBotCore.Models
         public double Total_supply { get; set; }
 
         [JsonProperty("percent_change_1h")]
-        public float Percent_change_hour { get; set; }
+        public decimal Percent_change_hour { get; set; }
 
         [JsonProperty("percent_change_24h")]
-        public float Percent_change_Day { get; set; }
+        public decimal Percent_change_Day { get; set; }
 
         [JsonProperty("percent_change_7d")]
-        public float Percent_change_Week { get; set; }
+        public decimal Percent_change_Week { get; set; }
 
         public string ShowInfo(DiscordSocketClient client)
         {
