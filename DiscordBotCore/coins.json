@@ -1,50 +1,127 @@
  [
-        {
-            "id": "bitcoin", 
-            "name": "Bitcoin", 
-            "symbol": "BTC",
-            "alert": "both"
-        },
+    {
+        "id": "bitcoin", 
+        "name": "Bitcoin", 
+        "symbol": "BTC",
+        "alert": "both"
+    },
 
-        {
-            "id": "ethereum", 
-            "name": "Ethereum", 
-            "symbol": "ETH",
-            "alert": "both"
-        },
+    {
+         "id": "ethereum", 
+        "name": "Ethereum", 
+        "symbol": "ETH",
+        "alert": "both"
+    },
 
-        {
-             "id": "litecoin", 
-            "name": "Litecoin", 
-            "symbol": "LTC",
-            "alert": "both" 
-        },
+    {
+        "id": "litecoin", 
+        "name": "Litecoin", 
+        "symbol": "LTC",
+        "alert": "both" 
+    },
 
-        {
-            "id": "monero", 
-            "name": "Monero", 
-            "symbol": "XMR", 
-            "alert": "price" 
-        },
+    {
+        "id": "monero", 
+        "name": "Monero", 
+        "symbol": "XMR", 
+        "alert": "price" 
+    },
 
-        {
-            "id": "ripple", 
-            "name": "Ripple", 
-            "symbol": "XRP",
-            "alert": "price" 
-        },
+    {
+        "id": "ripple", 
+        "name": "Ripple", 
+        "symbol": "XRP",
+        "alert": "price" 
+    },
 
-        {
-            "id": "neo", 
-            "name": "NEO", 
-            "symbol": "NEO",
-            "alert": "price" 
-        },
+    {
+        "id": "neo", 
+        "name": "NEO", 
+        "symbol": "NEO",
+        "alert": "price" 
+    },
+
+    {
+        "id": "iota", 
+        "name": "IOTA", 
+        "symbol": "MIOTA",
+        "alert": "price" 
+    },
+
+    {
+        "id": "stellar", 
+        "name": "Stellar Lumens", 
+        "symbol": "XLM",
+        "alert": "price" 
+    },
+
+    {
+        "id": "qtum", 
+        "name": "Qtum", 
+        "symbol": "QTUM",
+        "alert": "price" 
+    },
+
+    {
+        "id": "lisk", 
+        "name": "Lisk", 
+        "symbol": "LSK",
+        "alert": "price" 
+    },
+
+    {
+        "id": "nem", 
+        "name": "NEM", 
+        "symbol": "XEM",
+        "alert": "price" 
+    },
+
+    {
+        "id": "omisego", 
+        "name": "OmiseGO", 
+        "symbol": "OMG",
+        "alert": "price" 
+    },
+
+    {
+        "id": "zcash", 
+        "name": "Zcash", 
+        "symbol": "ZEC",
+        "alert": "price" 
+    },
+
+    {
+        "id": "coindash", 
+        "name": "CoinDash", 
+        "symbol": "CDT",
+        "alert": "price" 
+    },
+
+    {
+        "id": "stratis", 
+        "name": "Stratis", 
+        "symbol": "STRAT",
+        "alert": "price" 
+    },
+
+    {
+        "id": "vertcoin", 
+        "name": "Vertcoin", 
+        "symbol": "VTC",
+        "alert": "price" 
+    },
+
+    {
+        "id": "jetcoin", 
+        "name": "Jetcoin", 
+        "symbol": "JET",
+        "alert": "price" 
+    },
 
     {
         "id": "tether", 
         "name": "Tether", 
         "symbol": "USDT", 
         "alert": "volume"
-    }
+    }   
 ]
