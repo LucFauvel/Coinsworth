@@ -87,6 +87,7 @@ namespace DiscordBotCore.AdminBot
                     string message = null;
                     bool NeedsUpdate = !UpdateHistoy.TryGetValue(coin.Id, out DateTime LastUpdate);
                     string Emote = null;
+                    bool HasAlerted = false;
 
                     if (NeedsUpdate || TimeSpan.FromHours(1) <= (DateTime.Now - LastUpdate))
                     {
@@ -97,16 +98,18 @@ namespace DiscordBotCore.AdminBot
 
                         if (coin.Alert == "volume" || coin.Alert == "both")
                         {
+                            message = null;
+
                             if (VolumeHistory.ContainsKey(coin.Id))
                             {
                                 double Percent = ((coin.Day_volume_usd - VolumeHistory[coin.Id]) / VolumeHistory[coin.Id]) * 100;
                                 if (Percent >= 4)
                                 {
-                                    message = " Holy volume Batman! " + coin.Name + "'s volume " + (Emote ?? "") + " went up by <:Green:361650797802684416> " + Math.Abs(Percent) + "%";
+                                    message = " Holy volume " + coin.Name + " " + (Emote ?? "") + " <:Green:361650797802684416> " + Math.Round(Math.Abs(Percent), 2) + "%";
                                 }
                                 else if (Percent <= -4)
                                 {
-                                    message = " Holy volume Batman! " + coin.Name + "'s volume " + (Emote ?? "") + " went down by <:Red:361650806409396224> " + Math.Abs(Percent) + "%";
+                                    message = " Holy volume " + coin.Name + " " + (Emote ?? "") + " <:Red:361650806409396224> " + Math.Round(Math.Abs(Percent), 2) + "%";
 
                                 }
 
@@ -116,27 +119,36 @@ namespace DiscordBotCore.AdminBot
                             {
                                 VolumeHistory.Add(coin.Id, coin.Day_volume_usd);
                             }
-                        }
 
-                        if (message != null)
-                        {
-                            await AlertChannel.SendMessageAsync(message);
+                            if (message != null)
+                            {
+                                await AlertChannel.SendMessageAsync(message);
+                                HasAlerted = true;
+                            }
                         }
 
                         if (coin.Alert == "price" || coin.Alert == "both")
                         {
+                            message = null;
+
                             if (coin.Percent_change_hour >= 4)
                             {
-                                message = " Hey humans! " + coin.Name + " " + (Emote ?? "") + " went up by <:Green:361650797802684416> " + Math.Abs(coin.Percent_change_hour) + "%";
+                                message = " Holy price " + coin.Name + " " + (Emote ?? "") + " went up by <:Green:361650797802684416> " + Math.Abs(coin.Percent_change_hour) + "%";
                             }
                             else if (coin.Percent_change_hour <= -4)
                             {
-                                message = " Hey humans! " + coin.Name + " " + (Emote ?? "") + " went down by <:Red:361650806409396224> " + Math.Abs(coin.Percent_change_hour) + "%";
+                                message = " Holy price " + coin.Name + " " + (Emote ?? "") + " went down by <:Red:361650806409396224> " + Math.Abs(coin.Percent_change_hour) + "%";
 
+                            }
+
+                            if (message != null)
+                            {
+                                await AlertChannel.SendMessageAsync(message);
+                                HasAlerted = true;
                             }
                         }
 
-                        if (message != null)
+                        if (HasAlerted)
                         {
                             if (NeedsUpdate)
                             {
@@ -146,7 +158,7 @@ namespace DiscordBotCore.AdminBot
                             {
                                 UpdateHistoy[coin.Id] = DateTime.Now;
                             }
-                            await AlertChannel.SendMessageAsync(message);
+                            
                         }
                     }
                 }
