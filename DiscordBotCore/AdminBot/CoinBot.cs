@@ -23,6 +23,7 @@ namespace DiscordBotCore.AdminBot
         DiscordSocketClient _client { get; set; }
         public List<Discord.GuildEmote> Emotes;
         public SocketTextChannel AlertChannel { get; set; }
+        public SocketTextChannel MainChannel { get; set; }
         public List<IdSymbol> Symbols { get; set; }
         public Dictionary<string, DateTime> UpdateHistoy { get; set; }
         public Dictionary<string, double> VolumeHistory { get; set; }
@@ -80,7 +81,7 @@ namespace DiscordBotCore.AdminBot
                 Coins[i] = FoundCoin;
             }
 
-            if (AlertChannel != null)
+            if (AlertChannel != null && MainChannel != null)
             {
                 foreach (Coin coin in Coins)
                 {
@@ -93,10 +94,10 @@ namespace DiscordBotCore.AdminBot
                     {
                         if (Emotes.Exists(x => x.Name.ToLower() == coin.Name.ToLower()))
                         {
-                            Emote = "<:" + coin.Name + ":" + Emotes.Find(x => x.Name.ToLower() == coin.Name.ToLower()).Id + ">";
+                            Emote = "<:" + coin.Name + ":" + Emotes.Find(x => x.Name.ToLower() == coin.Name.ToLower()).Id + "> ";
                         }
 
-                        if (coin.Alert == "volume" || coin.Alert == "both")
+                        if (coin.Alert == "volume" ||  coin.Alert == "main" || coin.Alert == "main-volume")
                         {
                             message = null;
 
@@ -122,18 +123,25 @@ namespace DiscordBotCore.AdminBot
 
                             if (message != null)
                             {
-                                await AlertChannel.SendMessageAsync(message);
+                                if (coin.Alert == "main" || coin.Alert == "main-volume")
+                                {
+                                    await MainChannel.SendMessageAsync(message);
+                                }
+                                else
+                                {
+                                    await AlertChannel.SendMessageAsync(message);
+                                }
                                 HasAlerted = true;
                             }
                         }
 
-                        if (coin.Alert == "price" || coin.Alert == "both")
+                        if (coin.Alert == "price" || coin.Alert == "main")
                         {
                             message = null;
 
                             if (coin.Percent_change_hour >= 4)
                             {
-                                message = " Holy price " + coin.Name + " " + (Emote ?? "") + " went up by <:Green:361650797802684416> " + Math.Abs(coin.Percent_change_hour) + "%";
+                                message = " Holy price " + coin.Name + " " + (Emote ?? "") + "went up by <:Green:361650797802684416> " + Math.Abs(coin.Percent_change_hour) + "%";
                             }
                             else if (coin.Percent_change_hour <= -4)
                             {
@@ -143,7 +151,14 @@ namespace DiscordBotCore.AdminBot
 
                             if (message != null)
                             {
-                                await AlertChannel.SendMessageAsync(message);
+                                if (coin.Alert == "main")
+                                {
+                                    await MainChannel.SendMessageAsync(message);
+                                }
+                                else
+                                {
+                                    await AlertChannel.SendMessageAsync(message);
+                                }
                                 HasAlerted = true;
                             }
                         }
@@ -158,7 +173,7 @@ namespace DiscordBotCore.AdminBot
                             {
                                 UpdateHistoy[coin.Id] = DateTime.Now;
                             }
-                            
+
                         }
                     }
                 }

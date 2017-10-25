@@ -3,42 +3,42 @@
         "id": "bitcoin", 
         "name": "Bitcoin", 
         "symbol": "BTC",
-        "alert": "both"
+        "alert": "main"
     },
 
     {
          "id": "ethereum", 
         "name": "Ethereum", 
         "symbol": "ETH",
-        "alert": "both"
+        "alert": "main"
     },
 
     {
         "id": "litecoin", 
         "name": "Litecoin", 
         "symbol": "LTC",
-        "alert": "both" 
+        "alert": "main" 
     },
 
     {
         "id": "monero", 
         "name": "Monero", 
         "symbol": "XMR", 
-        "alert": "price" 
+        "alert": "main" 
     },
 
     {
         "id": "ripple", 
         "name": "Ripple", 
         "symbol": "XRP",
-        "alert": "price" 
+        "alert": "main" 
     },
 
     {
         "id": "neo", 
         "name": "NEO", 
         "symbol": "NEO",
-        "alert": "price" 
+        "alert": "main" 
     },
 
     {
@@ -66,7 +66,7 @@
         "id": "lisk", 
         "name": "Lisk", 
         "symbol": "LSK",
-        "alert": "price" 
+        "alert": "main" 
     },
 
     {
@@ -80,7 +80,7 @@
         "id": "omisego", 
         "name": "OmiseGO", 
         "symbol": "OMG",
-        "alert": "price" 
+        "alert": "main" 
     },
 
     {
@@ -119,9 +119,23 @@
     },
 
     {
+        "id": "gridcoin",
+        "name": "GridCoin", 
+        "symbol": "GRC",
+        "alert": "price" 
+    },
+
+    {
+        "id": "ark",
+        "name": "Ark", 
+        "symbol": "ARK",
+        "alert": "price" 
+    },
+
+    {
         "id": "tether", 
         "name": "Tether", 
         "symbol": "USDT", 
-        "alert": "volume"
+        "alert": "main-volume"
     }   
 ]

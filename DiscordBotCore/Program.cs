@@ -83,7 +83,8 @@ namespace DiscordBot
 
         private async Task GuildAvailable(SocketGuild guild)
         {
-            coinBot.AlertChannel = guild.GetTextChannel(361595846518636544);
+            coinBot.MainChannel = guild.GetTextChannel(361595846518636544);
+            coinBot.AlertChannel = guild.GetTextChannel(372552972543983646);
             coinBot.Emotes = new List<GuildEmote>(guild.Emotes);
             await coinBot.RefreshCoins();
         }
