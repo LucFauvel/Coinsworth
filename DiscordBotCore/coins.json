@@ -108,7 +108,7 @@
         "id": "vertcoin", 
         "name": "Vertcoin", 
         "symbol": "VTC",
-        "alert": "price" 
+        "alert": "main" 
     },
 
     {
