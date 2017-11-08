@@ -126,6 +126,13 @@
     },
 
     {
+        "id": "groestlcoin",
+        "name": "Groestlcoin", 
+        "symbol": "GRS",
+        "alert": "price" 
+    },
+
+    {
         "id": "ark",
         "name": "Ark", 
         "symbol": "ARK",
