@@ -91,9 +91,9 @@
     },
 
     {
-        "id": "coindash", 
-        "name": "CoinDash", 
-        "symbol": "CDT",
+        "id": "dash", 
+        "name": "Dash", 
+        "symbol": "DASH",
         "alert": "price" 
     },
 
@@ -109,13 +109,6 @@
         "name": "Vertcoin", 
         "symbol": "VTC",
         "alert": "main" 
-    },
-
-    {
-        "id": "jetcoin", 
-        "name": "Jetcoin", 
-        "symbol": "JET",
-        "alert": "price" 
     },
 
     {
