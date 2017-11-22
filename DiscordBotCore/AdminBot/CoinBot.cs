@@ -96,8 +96,8 @@ namespace DiscordBotCore.AdminBot
                     bool HasAlerted = false;
 
                     if (NeedsUpdate || TimeSpan.FromHours(1) <= (DateTime.Now - LastUpdate))
-                    { 
-                        if (coin.Alert == "volume" ||  coin.Alert == "main" || coin.Alert == "main-volume")
+                    {
+                        if (coin.Alert == "volume" || coin.Alert == "main" || coin.Alert == "main-volume")
                         {
                             message = null;
 
@@ -123,14 +123,22 @@ namespace DiscordBotCore.AdminBot
 
                             if (message != null)
                             {
-                                if (coin.Alert == "main" || coin.Alert == "main-volume")
+                                try
                                 {
-                                    await MainChannel.SendMessageAsync(message);
+                                    if (coin.Alert == "main" || coin.Alert == "main-volume")
+                                    {
+                                        await MainChannel.SendMessageAsync(message);
+                                    }
+                                    else
+                                    {
+                                        await AlertChannel.SendMessageAsync(message);
+                                    }
                                 }
-                                else
+                                catch (Exception e)
                                 {
-                                    await AlertChannel.SendMessageAsync(message);
+                                    Console.WriteLine(e.Message);
                                 }
+
                                 HasAlerted = true;
                             }
                         }
@@ -151,14 +159,22 @@ namespace DiscordBotCore.AdminBot
 
                             if (message != null)
                             {
-                                if (coin.Alert == "main")
+                                try
                                 {
-                                    await MainChannel.SendMessageAsync(message);
+                                    if (coin.Alert == "main")
+                                    {
+                                        await MainChannel.SendMessageAsync(message);
+                                    }
+                                    else
+                                    {
+                                        await AlertChannel.SendMessageAsync(message);
+                                    }
                                 }
-                                else
+                                catch (Exception e)
                                 {
-                                    await AlertChannel.SendMessageAsync(message);
+                                    Console.WriteLine(e.Message);
                                 }
+
                                 HasAlerted = true;
                             }
                         }
