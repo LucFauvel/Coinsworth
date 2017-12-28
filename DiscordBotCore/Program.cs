@@ -83,8 +83,12 @@ namespace DiscordBot
 
         private async Task GuildAvailable(SocketGuild guild)
         {
-            coinBot.MainChannel = guild.GetTextChannel(361595846518636544);
-            coinBot.AlertChannel = guild.GetTextChannel(372552972543983646);
+            coinBot.BitcoinChannel = guild.GetTextChannel(395781183482363904);
+            coinBot.TetherChannel = guild.GetTextChannel(382761458515181569);
+            coinBot.PriceChannel = guild.GetTextChannel(361595846518636544);
+            coinBot.VolumeChannel = guild.GetTextChannel(382761410649653250);
+            coinBot.MiscPriceChannel = guild.GetTextChannel(372552972543983646);
+            coinBot.MiscVolChannel = guild.GetTextChannel(395782527195021313);
             coinBot.Emotes = new List<GuildEmote>(guild.Emotes);
             await coinBot.RefreshCoins();
         }

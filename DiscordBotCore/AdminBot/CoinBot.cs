@@ -22,8 +22,12 @@ namespace DiscordBotCore.AdminBot
         Timer aTimer;
         DiscordSocketClient _client { get; set; }
         public List<Discord.GuildEmote> Emotes;
-        public SocketTextChannel AlertChannel { get; set; }
-        public SocketTextChannel MainChannel { get; set; }
+        public SocketTextChannel BitcoinChannel { get; set; }
+        public SocketTextChannel PriceChannel { get; set; }
+        public SocketTextChannel VolumeChannel { get; set; }
+        public SocketTextChannel TetherChannel { get; set; }
+        public SocketTextChannel MiscPriceChannel { get; set; }
+        public SocketTextChannel MiscVolChannel { get; set; }
         public List<IdSymbol> Symbols { get; set; }
         public Dictionary<string, DateTime> UpdateHistoy { get; set; }
         public Dictionary<string, double> VolumeHistory { get; set; }
@@ -87,7 +91,7 @@ namespace DiscordBotCore.AdminBot
                 catch (WebException) { }
             }
 
-            if (AlertChannel != null && MainChannel != null)
+            if (PriceChannel != null && VolumeChannel != null && TetherChannel != null && MiscPriceChannel != null && MiscVolChannel != null && BitcoinChannel != null)
             {
                 foreach (Coin coin in Coins)
                 {
@@ -106,11 +110,11 @@ namespace DiscordBotCore.AdminBot
                                 double Percent = ((coin.Day_volume_usd - VolumeHistory[coin.Id]) / VolumeHistory[coin.Id]) * 100;
                                 if (Percent >= 4)
                                 {
-                                    message = " Volume " + coin.Symbol + " went up by <:Green:361650797802684416> " + Math.Round(Math.Abs(Percent), 2) + "%";
+                                    message =  coin.Symbol + " <:UP:361650797802684416> " + Math.Round(Math.Abs(Percent), 2) + "%";
                                 }
                                 else if (Percent <= -4)
                                 {
-                                    message = " Volume " + coin.Symbol + " went down by <:Red:361650806409396224> " + Math.Round(Math.Abs(Percent), 2) + "%";
+                                    message =  coin.Symbol + " <:DOWN:361650806409396224> " + Math.Round(Math.Abs(Percent), 2) + "%";
 
                                 }
 
@@ -125,13 +129,21 @@ namespace DiscordBotCore.AdminBot
                             {
                                 try
                                 {
-                                    if (coin.Alert == "main" || coin.Alert == "main-volume")
+                                    if(coin.Id == "bitcoin")
                                     {
-                                        await MainChannel.SendMessageAsync(message);
+                                        await BitcoinChannel.SendMessageAsync(message);
+                                    }
+                                    else if(coin.Id == "tether")
+                                    {
+                                        await TetherChannel.SendMessageAsync(message);
+                                    }
+                                    else if (coin.Alert == "main")
+                                    {
+                                        await VolumeChannel.SendMessageAsync(message);
                                     }
                                     else
                                     {
-                                        await AlertChannel.SendMessageAsync(message);
+                                        await MiscVolChannel.SendMessageAsync(message);
                                     }
                                 }
                                 catch (Exception e)
@@ -149,11 +161,11 @@ namespace DiscordBotCore.AdminBot
 
                             if (coin.Percent_change_hour >= 4)
                             {
-                                message = " Price " + coin.Symbol + " went up by <:Green:361650797802684416> " + Math.Abs(coin.Percent_change_hour) + "%";
+                                message = coin.Symbol + " <:UP:361650797802684416> " + Math.Abs(coin.Percent_change_hour) + "%";
                             }
                             else if (coin.Percent_change_hour <= -4)
                             {
-                                message = " Price " + coin.Symbol + " went down by <:Red:361650806409396224> " + Math.Abs(coin.Percent_change_hour) + "%";
+                                message = coin.Symbol + " <:DOWN:361650806409396224> " + Math.Abs(coin.Percent_change_hour) + "%";
 
                             }
 
@@ -161,13 +173,17 @@ namespace DiscordBotCore.AdminBot
                             {
                                 try
                                 {
-                                    if (coin.Alert == "main")
+                                    if (coin.Id == "bitcoin")
                                     {
-                                        await MainChannel.SendMessageAsync(message);
+                                        await BitcoinChannel.SendMessageAsync(message);
+                                    }
+                                    else if (coin.Alert == "main")
+                                    {
+                                        await PriceChannel.SendMessageAsync(message);
                                     }
                                     else
                                     {
-                                        await AlertChannel.SendMessageAsync(message);
+                                        await MiscPriceChannel.SendMessageAsync(message);
                                     }
                                 }
                                 catch (Exception e)

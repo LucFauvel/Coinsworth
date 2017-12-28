@@ -56,6 +56,13 @@
     },
 
     {
+        "id": "feathercoin", 
+        "name": "Feathercoin", 
+        "symbol": "FTC",
+        "alert": "price" 
+    },
+
+    {
         "id": "qtum", 
         "name": "Qtum", 
         "symbol": "QTUM",
@@ -66,6 +73,13 @@
         "id": "lisk", 
         "name": "Lisk", 
         "symbol": "LSK",
+        "alert": "main" 
+    },
+
+    {
+        "id": "decred", 
+        "name": "Decred", 
+        "symbol": "DCR",
         "alert": "main" 
     },
 
