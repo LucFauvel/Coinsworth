@@ -18,7 +18,8 @@ namespace DiscordBotCore.AdminBot
         public static IConfigurationRoot Configuration { get; set; }
         public List<Coin> Coins { get; set; }
         string TickerURL { get; set; }
-        WebClient Client;
+        WebClient AlertClient;
+        WebClient LookUpClient;
         Timer aTimer;
         DiscordSocketClient _client { get; set; }
         public List<Discord.GuildEmote> Emotes;
@@ -41,7 +42,8 @@ namespace DiscordBotCore.AdminBot
              .AddJsonFile("coinsconfig.json", false, true);
 
             Configuration = builder.Build();
-            Client = new WebClient();
+            AlertClient = new WebClient();
+            LookUpClient = new WebClient();
 
             UpdateHistoy = new Dictionary<string, DateTime>();
             VolumeHistory = new Dictionary<string, double>();
@@ -80,7 +82,7 @@ namespace DiscordBotCore.AdminBot
             {
                 try
                 {
-                    string json = Client.DownloadString(TickerURL + Coins[i].Id);
+                    string json = AlertClient.DownloadString(TickerURL + Coins[i].Id);
 
                     List<Coin> Items = JsonConvert.DeserializeObject<List<Coin>>(json);
                     Coin FoundCoin = Items.Find(x => x.Id == Coins[i].Id);
@@ -131,7 +133,7 @@ namespace DiscordBotCore.AdminBot
                                 {
                                     if(coin.Id == "bitcoin")
                                     {
-                                        await BitcoinChannel.SendMessageAsync(message);
+                                        await BitcoinChannel.SendMessageAsync("V " + message);
                                     }
                                     else if(coin.Id == "tether")
                                     {
@@ -175,7 +177,7 @@ namespace DiscordBotCore.AdminBot
                                 {
                                     if (coin.Id == "bitcoin")
                                     {
-                                        await BitcoinChannel.SendMessageAsync(message);
+                                        await BitcoinChannel.SendMessageAsync("P " + message);
                                     }
                                     else if (coin.Alert == "main")
                                     {
@@ -224,7 +226,7 @@ namespace DiscordBotCore.AdminBot
 
             try
             {
-                json = Client.DownloadString(TickerURL + CleanId.ToLower());
+                json = LookUpClient.DownloadString(TickerURL + CleanId.ToLower());
             }
             catch (WebException) { }
 
