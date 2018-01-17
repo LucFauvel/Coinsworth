@@ -55,9 +55,9 @@ namespace DiscordBotCore.Models
             List<Discord.GuildEmote> Emotes = new List<Discord.GuildEmote>(client.GetGuild(358635130430029834).Emotes);
             string Emote = null;
 
-            if (Emotes.Exists(x => x.Name.ToLower() == Name.ToLower()))
+            if (Emotes.Exists(x => x.Name == Symbol))
             {
-                Emote = "<:" + Name + ":" + Emotes.Find(x => x.Name.ToLower() == Name.ToLower()).Id + ">";
+                Emote = "<:" + Name + ":" + Emotes.Find(x => x.Name == Symbol).Id + ">";
             }
 
             return "Name : " + (Emote ?? "") + " " + Name + "\n"

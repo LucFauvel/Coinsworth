@@ -100,6 +100,7 @@ namespace DiscordBotCore.AdminBot
                     string message = null;
                     bool NeedsUpdate = !UpdateHistoy.TryGetValue(coin.Id, out DateTime LastUpdate);
                     bool HasAlerted = false;
+                    var serverEmote = Emotes.FirstOrDefault(x => x.Name == coin.Symbol);
 
                     if (NeedsUpdate || TimeSpan.FromHours(1) <= (DateTime.Now - LastUpdate))
                     {
@@ -112,11 +113,11 @@ namespace DiscordBotCore.AdminBot
                                 double Percent = ((coin.Day_volume_usd - VolumeHistory[coin.Id]) / VolumeHistory[coin.Id]) * 100;
                                 if (Percent >= 4)
                                 {
-                                    message =  coin.Symbol + " <:UP:361650797802684416> " + Math.Round(Math.Abs(Percent), 2) + "%";
+                                    message =  (serverEmote == null ? coin.Symbol : "<:" + coin.Symbol + ":" + serverEmote.Id + ">") + " <:UP:361650797802684416> " + Math.Round(Math.Abs(Percent), 2) + "%";
                                 }
                                 else if (Percent <= -4)
                                 {
-                                    message =  coin.Symbol + " <:DOWN:361650806409396224> " + Math.Round(Math.Abs(Percent), 2) + "%";
+                                    message = (serverEmote == null ? coin.Symbol : "<:" + coin.Symbol + ":" + serverEmote.Id + ">") + " <:DOWN:361650806409396224> " + Math.Round(Math.Abs(Percent), 2) + "%";
 
                                 }
 
@@ -133,7 +134,8 @@ namespace DiscordBotCore.AdminBot
                                 {
                                     if(coin.Id == "bitcoin")
                                     {
-                                        await BitcoinChannel.SendMessageAsync("V " + message);
+                                        message += " V";
+                                        await BitcoinChannel.SendMessageAsync(message);
                                     }
                                     else if(coin.Id == "tether")
                                     {
@@ -163,11 +165,11 @@ namespace DiscordBotCore.AdminBot
 
                             if (coin.Percent_change_hour >= 4)
                             {
-                                message = coin.Symbol + " <:UP:361650797802684416> " + Math.Abs(coin.Percent_change_hour) + "%";
+                                message = (serverEmote == null ? coin.Symbol : "<:" + coin.Symbol + ":" + serverEmote.Id + ">") + " <:UP:361650797802684416> " + Math.Abs(coin.Percent_change_hour) + "%";
                             }
                             else if (coin.Percent_change_hour <= -4)
                             {
-                                message = coin.Symbol + " <:DOWN:361650806409396224> " + Math.Abs(coin.Percent_change_hour) + "%";
+                                message = (serverEmote == null ? coin.Symbol : "<:" + coin.Symbol + ":" + serverEmote.Id + ">") + " <:DOWN:361650806409396224> " + Math.Abs(coin.Percent_change_hour) + "%";
 
                             }
 
@@ -177,7 +179,8 @@ namespace DiscordBotCore.AdminBot
                                 {
                                     if (coin.Id == "bitcoin")
                                     {
-                                        await BitcoinChannel.SendMessageAsync("P " + message);
+                                        message += " P";
+                                        await BitcoinChannel.SendMessageAsync(message);
                                     }
                                     else if (coin.Alert == "main")
                                     {
