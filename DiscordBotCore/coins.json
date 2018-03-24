@@ -105,6 +105,13 @@
     },
 
     {
+        "id": "zencash", 
+        "name": "ZenCash", 
+        "symbol": "ZEN",
+        "alert": "main" 
+    },
+
+    {
         "id": "dash", 
         "name": "Dash", 
         "symbol": "DASH",
